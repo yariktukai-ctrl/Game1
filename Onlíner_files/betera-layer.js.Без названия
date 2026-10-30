@@ -1,0 +1,139 @@
+(function () {
+  const audioCollection = {};
+
+  const initSpeech = id => {
+    const $speech = document.querySelector(
+      '.b-main-page-speech[data-id="' + id + '"]'
+    );
+    const updateTimer = () => {
+      const time = $speech.querySelector('.b-main-page-speech__time');
+      const fill = $speech.querySelector('.b-main-page-speech__fill');
+      const seconds = Math.floor(audio.currentTime % 60);
+      const minutes = Math.floor(audio.currentTime / 60);
+
+      time.textContent =
+        minutes + ':' + (seconds < 10 ? '0' + seconds : seconds);
+
+      fill.style.width = (audio.currentTime / audio.duration) * 100 + '%';
+    };
+
+    const playButton = $speech.querySelector('.b-main-page-speech__button');
+
+    const audio = audioCollection[id] || new Audio();
+
+    audioCollection[id] = audio;
+
+    playButton.addEventListener('click', () => {
+      if (!audio.src) {
+        audio.src = $speech.getAttribute('data-audio');
+      }
+
+      if (audio.paused) {
+        audio.play();
+        playButton.classList.add('b-main-page-speech__button_pause');
+        playButton.classList.remove('b-main-page-speech__button_play');
+      } else {
+        audio.pause();
+        playButton.classList.remove('b-main-page-speech__button_pause');
+        playButton.classList.add('b-main-page-speech__button_play');
+      }
+    });
+
+    audio.addEventListener('timeupdate', updateTimer);
+
+    audio.addEventListener('ended', () => {
+      playButton.classList.remove('b-main-page-speech__button_pause');
+      playButton.classList.add('b-main-page-speech__button_play');
+    });
+
+    updateTimer();
+  };
+
+  const initMatchesSwap = () => {
+    const $pastMatches = $('#js-past-matches');
+    const $futureMatches = $('#js-future-matches');
+    const $pastMatchesContainer = $('#js-past-matches-container');
+    const $futureMatchesContainer = $('#js-future-matches-container');
+    const $expertSpeech = $('.js-expert-speech');
+
+    $pastMatches.on('click', () => {
+      $pastMatchesContainer.show();
+      $futureMatchesContainer.hide();
+      $futureMatches.show();
+      $pastMatches.hide();
+      $expertSpeech.hide();
+    });
+
+    $futureMatches.on('click', () => {
+      $pastMatchesContainer.hide();
+      $futureMatchesContainer.show();
+      $futureMatches.hide();
+      $pastMatches.show();
+      $expertSpeech.show();
+    });
+  };
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const $parimatchWidget = $('#js-pm');
+    const activeTabClass = 'b-main-page-tabs__item_active';
+
+    const updateSpeech = () => {
+      const speechId = $parimatchWidget
+        .find('.b-main-page-speech')
+        .attr('data-id');
+
+      speechId && initSpeech(speechId);
+    };
+
+    $parimatchWidget.on('click', '.b-main-page-tabs__item, .js-favorite-match', function (event) {
+      event.preventDefault();
+
+      const item = event.currentTarget;
+      const tabId = item.getAttribute('data-tab');
+      const cssClass = item.getAttribute('data-class');
+
+      $('.b-parimatch-layer', $parimatchWidget).load(
+        'tabs/parimatch/' + tabId,
+        {
+          method: 'POST',
+        },
+        function () {
+          $parimatchWidget.removeClass().addClass(cssClass);
+          $('.b-main-page-tabs__item', $parimatchWidget).removeClass(
+            activeTabClass
+          );
+
+          $('.b-main-page-tabs__item[data-tab="' + tabId + '"]', $parimatchWidget).addClass(
+            activeTabClass
+          );
+
+          updateSpeech();
+          initMatchesSwap();
+        }
+      );
+
+      Object.values(audioCollection).forEach(audio => {
+        audio.pause();
+      });
+    });
+
+    // Fix for Safari: avoid .show()/.hide() and use .css('display', ...) instead
+
+    $('#js-past-matches').on('click', function () {
+      $('#js-past-matches-container').css('display', 'flex');
+      $('#js-future-matches-container').css('display', 'none');
+      $('#js-future-matches').css('display', 'inline-block');
+      $('#js-past-matches').css('display', 'none');
+    });
+
+    $('#js-future-matches').on('click', function () {
+      $('#js-past-matches-container').css('display', 'none');
+      $('#js-future-matches-container').css('display', 'flex');
+      $('#js-future-matches').css('display', 'none');
+      $('#js-past-matches').css('display', 'inline-block');
+    });
+
+    updateSpeech();
+    initMatchesSwap();
+  });
+})();

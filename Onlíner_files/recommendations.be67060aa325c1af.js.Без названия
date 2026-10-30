@@ -1,0 +1,105 @@
+!function a(n,s,o){function i(r,e){if(!s[r]){if(!n[r]){var t="function"==typeof require&&require;if(!e&&t)return t(r,!0);if(c)return c(r,!0);e=new Error("Cannot find module '"+r+"'");throw e.code="MODULE_NOT_FOUND",e}t=s[r]={exports:{}};n[r][0].call(t.exports,function(e){var t=n[r][1][e];return i(t||e)},t,t.exports,a,n,s,o)}return s[r].exports}for(var c="function"==typeof require&&require,e=0;e<o.length;e++)i(o[e]);return i}({1:[function(e,t,r){var a,n;a=this,n=function(){var t=Object.prototype.toString,q=Array.isArray||function(e){return"[object Array]"===t.call(e)};function p(e){return"function"==typeof e}function P(e){return e.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g,"\\$&")}function u(e,t){return null!=e&&"object"==typeof e&&t in e}var r=RegExp.prototype.test;var a=/\S/;function O(e){return!r.call(a,e)}var n={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;","/":"&#x2F;","`":"&#x60;","=":"&#x3D;"};var R=/\s*/,A=/\s+/,V=/\s*=/,I=/\s*\}/,M=/#|\^|\/|>|\{|&|=|!/;function o(e,t){if(!e)return[];var r,a,n,s=!1,o=[],i=[],c=[],l=!1,p=!1,u="",f=0;function d(){if(l&&!p)for(;c.length;)delete i[c.pop()];else c=[];p=l=!1}function h(e){if("string"==typeof e&&(e=e.split(A,2)),!q(e)||2!==e.length)throw new Error("Invalid tags: "+e);r=new RegExp(P(e[0])+"\\s*"),a=new RegExp("\\s*"+P(e[1])),n=new RegExp("\\s*"+P("}"+e[1]))}h(t||W.tags);for(var g,_,m,v,w,y,b=new N(e);!b.eos();){if(g=b.pos,m=b.scanUntil(r))for(var k=0,x=m.length;k<x;++k)O(v=m.charAt(k))?(c.push(i.length),u+=v):(s=p=!0,u+=" "),i.push(["text",v,g,g+1]),g+=1,"\n"===v&&(d(),u="",f=0,s=!1);if(!b.scan(r))break;if(l=!0,_=b.scan(M)||"name",b.scan(R),"="===_?(m=b.scanUntil(V),b.scan(V),b.scanUntil(a)):"{"===_?(m=b.scanUntil(n),b.scan(I),b.scanUntil(a),_="&"):m=b.scanUntil(a),!b.scan(a))throw new Error("Unclosed tag at "+b.pos);if(w=">"==_?[_,m,g,b.pos,u,f,s]:[_,m,g,b.pos],f++,i.push(w),"#"===_||"^"===_)o.push(w);else if("/"===_){if(!(y=o.pop()))throw new Error('Unopened section "'+m+'" at '+g);if(y[1]!==m)throw new Error('Unclosed section "'+y[1]+'" at '+g)}else"name"===_||"{"===_||"&"===_?p=!0:"="===_&&h(m)}if(d(),y=o.pop())throw new Error('Unclosed section "'+y[1]+'" at '+b.pos);for(var E,C=(e=>{for(var t,r,a=[],n=0,s=e.length;n<s;++n)(t=e[n])&&("text"===t[0]&&r&&"text"===r[0]?(r[1]+=t[1],r[3]=t[3]):(a.push(t),r=t));return a})(i),j=[],S=j,T=[],L=0,U=C.length;L<U;++L)switch((E=C[L])[0]){case"#":case"^":S.push(E),T.push(E),S=E[4]=[];break;case"/":T.pop()[5]=E[2],S=0<T.length?T[T.length-1][4]:j;break;default:S.push(E)}return j}function N(e){this.string=e,this.tail=e,this.pos=0}function s(e,t){this.view=e,this.cache={".":this.view},this.parent=t}function e(){this.templateCache={_cache:{},set:function(e,t){this._cache[e]=t},get:function(e){return this._cache[e]},clear:function(){this._cache={}}}}N.prototype.eos=function(){return""===this.tail},N.prototype.scan=function(e){var e=this.tail.match(e);return e&&0===e.index?(e=e[0],this.tail=this.tail.substring(e.length),this.pos+=e.length,e):""},N.prototype.scanUntil=function(e){var t,r=this.tail.search(e);switch(r){case-1:t=this.tail,this.tail="";break;case 0:t="";break;default:t=this.tail.substring(0,r),this.tail=this.tail.substring(r)}return this.pos+=t.length,t},s.prototype.push=function(e){return new s(e,this)},s.prototype.lookup=function(e){var t,r,a,n=this.cache;if(n.hasOwnProperty(e))t=n[e];else{for(var s,o,i,c=this,l=!1;c;){if(0<e.indexOf("."))for(s=c.view,o=e.split("."),i=0;null!=s&&i<o.length;)i===o.length-1&&(l=u(s,o[i])||(r=s,a=o[i],null!=r&&"object"!=typeof r&&r.hasOwnProperty&&r.hasOwnProperty(a))),s=s[o[i++]];else s=c.view[e],l=u(c.view,e);if(l){t=s;break}c=c.parent}n[e]=t}return t=p(t)?t.call(this.view):t},e.prototype.clearCache=function(){void 0!==this.templateCache&&this.templateCache.clear()},e.prototype.parse=function(e,t){var r=this.templateCache,a=e+":"+(t||W.tags).join(":"),n=void 0!==r,s=n?r.get(a):void 0;return null==s&&(s=o(e,t),n)&&r.set(a,s),s},e.prototype.render=function(e,t,r,a){var n=this.getConfigTags(a),n=this.parse(e,n),t=t instanceof s?t:new s(t,void 0);return this.renderTokens(n,t,r,e,a)},e.prototype.renderTokens=function(e,t,r,a,n){for(var s,o,i,c="",l=0,p=e.length;l<p;++l)i=void 0,"#"===(o=(s=e[l])[0])?i=this.renderSection(s,t,r,a,n):"^"===o?i=this.renderInverted(s,t,r,a,n):">"===o?i=this.renderPartial(s,t,r,n):"&"===o?i=this.unescapedValue(s,t):"name"===o?i=this.escapedValue(s,t,n):"text"===o&&(i=this.rawValue(s)),void 0!==i&&(c+=i);return c},e.prototype.renderSection=function(e,t,r,a,n){var s=this,o="",i=t.lookup(e[1]);if(i){if(q(i))for(var c=0,l=i.length;c<l;++c)o+=this.renderTokens(e[4],t.push(i[c]),r,a,n);else if("object"==typeof i||"string"==typeof i||"number"==typeof i)o+=this.renderTokens(e[4],t.push(i),r,a,n);else if(p(i)){if("string"!=typeof a)throw new Error("Cannot use higher-order sections without the original template");null!=(i=i.call(t.view,a.slice(e[3],e[5]),function(e){return s.render(e,t,r,n)}))&&(o+=i)}else o+=this.renderTokens(e[4],t,r,a,n);return o}},e.prototype.renderInverted=function(e,t,r,a,n){var s=t.lookup(e[1]);if(!s||q(s)&&0===s.length)return this.renderTokens(e[4],t,r,a,n)},e.prototype.indentPartial=function(e,t,r){for(var a=t.replace(/[^ \t]/g,""),n=e.split("\n"),s=0;s<n.length;s++)n[s].length&&(0<s||!r)&&(n[s]=a+n[s]);return n.join("\n")},e.prototype.renderPartial=function(e,t,r,a){var n,s,o,i,c;if(r)return n=this.getConfigTags(a),null!=(s=p(r)?r(e[1]):r[e[1]])?(o=e[6],i=e[4],c=s,0==e[5]&&i&&(c=this.indentPartial(s,i,o)),e=this.parse(c,n),this.renderTokens(e,t,r,c,a)):void 0},e.prototype.unescapedValue=function(e,t){t=t.lookup(e[1]);if(null!=t)return t},e.prototype.escapedValue=function(e,t,r){r=this.getConfigEscape(r)||W.escape,t=t.lookup(e[1]);if(null!=t)return("number"==typeof t&&r===W.escape?String:r)(t)},e.prototype.rawValue=function(e){return e[1]},e.prototype.getConfigTags=function(e){return q(e)?e:e&&"object"==typeof e?e.tags:void 0},e.prototype.getConfigEscape=function(e){if(e&&"object"==typeof e&&!q(e))return e.escape};var W={name:"mustache.js",version:"4.2.0",tags:["{{","}}"],clearCache:void 0,escape:void 0,parse:void 0,render:void 0,Scanner:void 0,Context:void 0,Writer:void 0,set templateCache(e){i.templateCache=e},get templateCache(){return i.templateCache}},i=new e;return W.clearCache=function(){return i.clearCache()},W.parse=function(e,t){return i.parse(e,t)},W.render=function(e,t,r,a){if("string"!=typeof e)throw new TypeError('Invalid template! Template should be a "string" but "'+(q(n=e)?"array":typeof n)+'" was given as the first argument for mustache#render(template, view, partials)');var n;return i.render(e,t,r,a)},W.escape=function(e){return String(e).replace(/[&<>"'`=\/]/g,function(e){return n[e]})},W.Scanner=N,W.Context=s,W.Writer=e,W},"object"==typeof r&&void 0!==t?t.exports=n():"function"==typeof define&&define.amd?define(n):(a=a||self).Mustache=n()},{}],2:[function(e,t,r){let s=e("mustache"),o=e("./recommendations.template");var e=document.querySelector(".js-personal-recommendations"),a=document.querySelector(".js-catalog-offers");let i=e=>e.map(e=>{var t=`https://catalog.onliner.by/${e.schema}/${e.manufacturer}/`+e.key;return{...e,is_single_price:e.price_min&&e.price_max&&e.price_min.amount===e.price_max.amount,html_url:t,formatted_price_min:e.price_min&&(e=>{let[t,r]=Number(e).toFixed(2).split(".");return e=Math.abs(Number(t)),(t=9999<e?t.replace(/\B(?=(\d{3})+(?!\d))/g," "):t)+","+r})(e.price_min.amount),prices_url:t+"/prices",reviews_url:t+"/reviews"}}),c=(e,t)=>{e.style.display="none",["main"].includes(t)&&document.querySelectorAll("#catalog-offers").forEach(e=>{e.style.display="block"})},n=a=>{let n=a.dataset.project;(e=>{let r=new XMLHttpRequest;var t=new URLSearchParams;return e&&t.set("type",e),r.open("GET","/sdapi/recommendations.api/catalog/recommended-products?"+t.toString()),r.send(),new Promise((e,t)=>{r.onload=()=>{[200,204].includes(r.status)?e(r.response&&JSON.parse(r.response)):t(new Error("Ошибка загрузки: "+r.status))},r.onerror=()=>{t(new Error("Ошибка сети"))}})})(n).then(e=>{var t,r;e&&e.products.length?(a.id="any-recs-container",a.dataset.strategyMessage=e.title||"",a.dataset.strategyName=e.uuid||"",a.dataset.placement=e.type||"",a.innerHTML=s.render(o,{recommendations:i(e.products),header:["news"].includes(n)&&e.title||""}),t=a,1001<=window.innerWidth&&(new Swiper(t.querySelector(".swiper-container"),{slidesPerView:"auto",slidesPerGroupAuto:!0,simulateTouch:!1,navigation:{nextEl:".swiper-button-next",prevEl:".swiper-button-prev"}}),t.classList.add("js-personal-recommendations-ready")),t=a,r=e.products,u(t,()=>l(r)),t.querySelectorAll(".js-catalog-layer-item").forEach(e=>{e.addEventListener("click",()=>{p(e.dataset.productKey)})})):c(a,n)}).catch(e=>{c(a,n)})},l=e=>{window.dataLayer&&(window.dataLayer.push({ecommerce:null}),e=e.map(e=>({item_list_name:"recommendation_widget",item_id:e.key})),window.dataLayer.push({event:"view_item_list",recomendation_type:"recommendation",ecommerce:{items:e}}))},p=e=>{window.dataLayer&&(window.dataLayer.push({ecommerce:null}),window.dataLayer.push({event:"select_item",recomendation_type:"recommendation",ecommerce:{items:[{item_list_name:"recommendation_widget",item_id:e}]}}))},u=(t,r)=>{let a=new IntersectionObserver(e=>{e.forEach(e=>{e.isIntersecting&&(r(),a.unobserve(t))})});a.observe(t)},f=()=>{window.dataLayer&&(window.dataLayer.push({ecommerce:null}),window.dataLayer.push({event:"view_base_recommendation_block"}))},d=e=>{u(e,f),e.classList.add("js-catalog-offers-ready")};e&&n(e),a&&d(a),window.initRecommendationsWidget=n,window.initTrackingBaseRecommendations=d},{"./recommendations.template":3,mustache:1}],3:[function(e,t,r){t.exports=`
+  {{#header}}
+  <div class="catalog-offers__header">
+      {{header}}
+  </div>
+  {{/header}}
+
+  <div class="catalog-offers__container swiper-container">
+    <div class="catalog-offers__list swiper-wrapper">
+      {{#recommendations}}
+        <div class="catalog-offers__item swiper-slide js-catalog-layer-item any-recs-product" data-product-key="{{key}}" data-product-id="{{key}}">
+          <div class="catalog-offers__top">
+            {{#prime_info.available}}
+              <div class="catalog-offers__label catalog-offers__label_prime"></div>
+            {{/prime_info.available}}
+
+            {{#stickers}}
+              {{#html_url}}
+                <a href="{{html_url}}" class="catalog-offers__label" style="background-color: #{{colors.light.bg}}; color: #{{colors.light.text}};">
+                  {{label}}
+                </a>
+              {{/html_url}}
+
+              {{^html_url}}
+                <div class="catalog-offers__label" style="background-color: #{{colors.light.bg}}; color: #{{colors.light.text}};">
+                  {{label}}
+                </div>
+              {{/html_url}}
+            {{/stickers}}
+          </div>
+
+          <div class="catalog-offers__preview">
+            <a href="{{html_url}}" class="catalog-offers__image">
+              <picture>
+                <img src="{{images.header}}" loading="lazy">
+              </picture>
+            </a>
+          </div>
+
+          {{#sale}}
+            <a href="{{prices_url}}" class="catalog-offers__hot">
+              –{{sale.discount}}%
+            </a>
+
+            <a href="{{prices_url}}" class="catalog-offers__price catalog-offers__price_secondary">
+              {{^is_single_price}}
+                <span class="catalog-offers__price-prefix">
+                  от
+                </span>
+              {{/is_single_price}}
+              <span class="catalog-offers__price-value">
+                {{formatted_price_min}} р.
+              </span>
+            </a>
+          {{/sale}}
+
+          {{^sale}}
+            <a href="{{prices_url}}" class="catalog-offers__price catalog-offers__price_primary">
+              {{^is_single_price}}
+                <span class="catalog-offers__price-prefix">
+                  от
+                </span>
+              {{/is_single_price}}
+              <span class="catalog-offers__price-value">
+                {{formatted_price_min}} р.
+              </span>
+            </a>
+          {{/sale}}
+
+          <a href="{{reviews_url}}" class="catalog-offers__grade">
+            <span class="catalog-offers__grade-stars">
+              {{#reviews.count}}
+                <span class="catalog-offers__grade-fill" style="width: 100%;"></span>
+              {{/reviews.count}}
+              {{^reviews.count}}
+                <span class="catalog-offers__grade" style="width:100%;"></span>
+              {{/reviews.count}}
+            </span>
+
+            {{#reviews.count}}
+              <span class="catalog-offers__grade-value">{{reviews.rating}}</span>
+            {{/reviews.count}}
+
+            {{#reviews.count}}
+              <span class="catalog-offers__grade-count">({{reviews.count}})</span>
+            {{/reviews.count}}
+
+            {{^reviews.count}}
+              <span class="catalog-offers__grade-count">Нет отзывов</span>
+            {{/reviews.count}}
+          </a>
+
+          <div class="catalog-offers__title">
+            <a href="{{html_url}}" class="catalog-offers__link catalog-offers__link_primary">
+              {{full_name}}
+            </a>
+          </div>
+        </div>
+      {{/recommendations}}
+    </div>
+
+    <div class="catalog-offers__arrow catalog-offers__arrow_prev swiper-button-prev"></div>
+    <div class="catalog-offers__arrow catalog-offers__arrow_next swiper-button-next"></div>
+  </div>
+`},{}]},{},[2]);

@@ -1,0 +1,9 @@
+async function fetchCounter() {
+  try {
+    fetch('https://counter.mediameter.by?href=' + encodeURIComponent(window.location.href), {mode: "no-cors", method: "GET"})
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+fetchCounter();
